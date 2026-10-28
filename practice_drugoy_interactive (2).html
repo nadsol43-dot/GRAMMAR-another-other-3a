@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>«Другой» in English — interactive practice</title>
+<style>
+  :root{
+    --ink:#1e2430; --muted:#6b7488; --line:#dde1e9; --soft:#f6f7fa;
+    --accent:#c14b30; --ok:#1f8a5b; --bad:#c03737; --btn:#1e2430;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Segoe UI",Roboto,Arial,Helvetica,sans-serif;
+    color:var(--ink); background:#eef0f4; line-height:1.5; font-size:15.5px;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:0 14px 90px}
+  header{
+    background:linear-gradient(135deg,#20293a,#2f3d55); color:#fff;
+    padding:22px 0 18px; margin-bottom:22px;
+  }
+  header .wrap{padding-bottom:0}
+  h1{font-size:22px;margin:0 0 4px;letter-spacing:-.2px}
+  header p{margin:0;color:#c3cbdb;font-size:13.5px}
+  .bar{
+    position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);
+    border-bottom:1px solid var(--line); backdrop-filter:blur(6px);
+  }
+  .bar .wrap{display:flex;align-items:center;gap:10px;padding:9px 14px;flex-wrap:wrap}
+  .track{flex:1 1 150px;height:9px;background:#e6e9f0;border-radius:9px;overflow:hidden;min-width:110px}
+  .fill{height:100%;width:0;background:linear-gradient(90deg,#4a7fd4,#1f8a5b);transition:width .25s}
+  .score{font-size:13.5px;font-weight:600;white-space:nowrap}
+  .score span{color:var(--muted);font-weight:400}
+  button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink);padding:8px 13px;transition:.15s}
+  button:hover{background:#f2f4f8}
+  button.primary{background:var(--btn);border-color:var(--btn);color:#fff}
+  button.primary:hover{background:#33405a}
+  button.ghost{background:transparent}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:0 0 22px;box-shadow:0 1px 3px rgba(20,30,50,.05)}
+  h2{font-size:18px;margin:0 0 4px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .badge{font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;background:#eef1f7;color:#5b6580;padding:3px 8px;border-radius:20px;font-weight:600}
+  h3{font-size:13px;letter-spacing:.7px;text-transform:uppercase;color:#5b6580;margin:24px 0 8px}
+  .lead{color:var(--muted);font-size:14px;margin:0 0 14px}
+  .rule{background:var(--soft);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;font-size:14px}
+  .rule div{padding:3px 0}
+  .rule b{color:#a83f27}
+  .hintline{font-size:13px;color:var(--muted);margin:8px 0 0}
+  summary{cursor:pointer;font-weight:600;font-size:14px;color:#2c3548;outline:none}
+  summary::marker{color:var(--accent)}
+  .bank{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 4px}
+  .chip{font-size:13.5px;padding:5px 11px;border:1px solid #cdd4e0;border-radius:20px;background:#fff;cursor:pointer;color:#2c3548}
+  .chip:hover{background:#f0f4ff;border-color:#9db0d6}
+  .chip:active{transform:translateY(1px)}
+
+  /* gap sentences */
+  .q{margin:0;padding:9px 0;border-bottom:1px dashed #eceff4;font-size:15px;display:flex;gap:9px;align-items:baseline}
+  .q:last-child{border-bottom:none}
+  .q .n{flex:0 0 24px;color:#9aa3b5;font-size:13px;font-variant-numeric:tabular-nums}
+  .q .body{flex:1}
+  .q .hint{display:block;color:#8b93a6;font-size:12.5px;font-style:italic;margin-top:2px}
+  input.gap{
+    font-family:inherit;font-size:14.5px;color:#1a3a8f;
+    border:none;border-bottom:1.6px solid #8f9ab0;background:#fbfcff;
+    padding:1px 6px 2px;min-width:132px;width:132px;text-align:center;border-radius:3px 3px 0 0;
+  }
+  input.gap:focus{outline:none;border-bottom-color:#4a7fd4;background:#eff4ff}
+  input.gap.ok{border-bottom-color:var(--ok);background:#effaf4;color:#12653f}
+  input.gap.bad{border-bottom-color:var(--bad);background:#fdf0f0;color:#9c2b2b}
+  .fb{font-size:12.5px;color:var(--bad);margin-left:4px;white-space:nowrap}
+  .fb.good{color:var(--ok)}
+
+  /* choices */
+  .q.mc{align-items:center}
+  .opts{display:inline-flex;gap:7px;margin-left:2px;vertical-align:baseline}
+  .opt{font-size:13.5px;padding:3px 12px;border-radius:16px;border:1px solid #cdd4e0;background:#fff}
+  .opt.sel{background:#1e2430;color:#fff;border-color:#1e2430}
+  .opt.ok{background:#e8f7ef;border-color:var(--ok);color:#12653f;font-weight:600}
+  .opt.bad{background:#fdecec;border-color:var(--bad);color:#9c2b2b;text-decoration:line-through}
+
+  /* error correction */
+  .sentence{font-size:15px;line-height:2.1}
+  .tok{cursor:pointer;padding:2px 3px;border-radius:5px;border-bottom:1.6px solid transparent}
+  .tok:hover{background:#eef3ff;border-bottom-color:#9db0d6}
+  .tok.sel{background:#fff3d6;border-bottom-color:#d69b1f}
+  .tok.right{background:#e8f7ef;border-bottom-color:var(--ok);color:#12653f;font-weight:600}
+  .tok.wrong{background:#fdecec;border-bottom-color:var(--bad);color:#9c2b2b;text-decoration:line-through}
+  .fixrow{margin:4px 0 0 33px;font-size:13.5px;color:#4a5468}
+  .fixrow select{font-family:inherit;font-size:13.5px;padding:4px 8px;border-radius:7px;border:1px solid #cdd4e0;background:#fff}
+  .hide{display:none !important}
+
+  /* story */
+  .story{background:#fffdf7;border:1px solid #ece5d3;border-radius:10px;padding:14px 16px;font-size:15.5px;line-height:2.4}
+  .story input.gap{min-width:128px;width:128px}
+  .story .fixed{background:#eef1f7;border-radius:5px;padding:2px 7px;font-weight:600;color:#3b4863}
+
+  /* free writing */
+  textarea{width:100%;min-height:120px;font-family:inherit;font-size:14.5px;line-height:1.6;padding:11px 13px;border:1px solid #cdd4e0;border-radius:10px;resize:vertical;background:#fbfcff}
+  textarea:focus{outline:none;border-color:#4a7fd4;background:#f6f9ff}
+  .analyse{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;font-size:13px}
+  .tag{padding:3px 10px;border-radius:14px;border:1px solid #d5dbe6;background:#f7f9fc;color:#8b93a6}
+  .tag.hit{background:#e8f7ef;border-color:#9ad4b8;color:#12653f;font-weight:600}
+  .anote{font-size:13px;margin:8px 0 0;color:#4a5468}
+
+  .subactions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px;padding-top:14px;border-top:1px solid var(--line);align-items:center}
+  .subscore{font-size:13.5px;font-weight:600;color:#2c3548;margin-left:auto}
+  .note{font-size:13px;color:var(--muted);border-top:1px dashed #d8dde7;padding-top:12px;margin-top:6px}
+  .keys{background:var(--soft);border-radius:10px;padding:12px 15px;font-size:13.5px;margin-top:12px}
+  .keys b{color:#a83f27}
+  @media (max-width:560px){
+    body{font-size:15px}
+    .card{padding:16px 15px}
+    input.gap{min-width:104px;width:104px;font-size:14px}
+    .story input.gap{min-width:100px;width:100px}
+    .q{flex-wrap:wrap}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>«Другой» in English — interactive practice</h1>
+    <p>another · other · the other · others · the others · each other / one another · A2–B1</p>
+  </div>
+</header>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <div class="score" id="score">0 / 44 <span>correct</span></div>
+    <button class="primary" id="checkAll">Check all</button>
+    <button id="showAll">Show answers</button>
+    <button class="ghost" id="resetAll">Reset</button>
+    <button id="printBtn" title="Открыть версию для печати (A4) — оттуда Ctrl+P → «Сохранить как PDF»">Print / PDF</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="card">
+    <details>
+      <summary>Rule card — открыть / закрыть</summary>
+      <div class="rule" style="margin-top:12px">
+        <div><b>another</b> = ещё один, ещё одна (любая) → + существительное в единственном числе: <i>another pen, another cup</i>.</div>
+        <div><b>other</b> = другие → перед существительным во мн. ч. или неисчисляемым: <i>other people, other side…</i></div>
+        <div><b>the other</b> = второй, другой (их всего два / конкретный второй): <i>the other hand, the other book</i>.</div>
+        <div><b>others</b> = другие (без существительного, в общем смысле): <i>Some like tea, others like coffee.</i></div>
+        <div><b>the others</b> = остальные (конкретная известная группа): <i>Two went home, the others stayed.</i></div>
+        <div><b>each other / one another</b> = друг друга: <i>They help each other.</i></div>
+        <div class="hintline">Тест: ① есть <i>the</i> → «второй / остальные из известной группы»; ② есть существительное после → <i>other / the other</i>; ③ существительного нет → <i>others / the others / another (one)</i>.</div>
+      </div>
+    </details>
+  </div>
+
+  <!-- ================= ACTIVITY 1 ================= -->
+  <section class="card" id="act1">
+    <h2>Activity 1. Кто из них кто? <span class="badge">form</span></h2>
+    <p class="lead">Впиши нужную форму «другой» (или выбери вариант). Подсказок-переводов нет: форму подсказывает сам контекст — сколько предметов, очерчен ли круг, есть ли существительное после пропуска. Нажимай на слова в банке — они вставляются в активное поле.</p>
+
+    <div class="bank" id="bank1"></div>
+    <p style="margin:6px 0 0;font-size:13px;color:#5b6580"><b>others</b> — «какие-то другие, список открыт»; <b>the others</b> — «все остальные из очерченного круга» (<i>some of my friends / five students in our group → the others</i>, <i>some people → others</i>).</p>
+
+    <h3>Part A · People and things</h3>
+    <div id="a1a"></div>
+
+    <h3>Part B · Choose the correct option</h3>
+    <div id="a1b"></div>
+
+    <h3>Part C · Find the mistake, then fix it</h3>
+    <p class="hintline">Сначала нажми на неверное слово, затем выбери правильную форму.</p>
+    <div id="a1c"></div>
+
+    <h3>Part D · About you <span class="badge" style="background:#fdf1ec;color:#a83f27">not scored</span></h3>
+    <p class="hintline">Допиши предложения про себя, используя разные формы. Кнопка «Analyse» покажет, какие формы ты уже использовал.</p>
+    <div class="card" style="box-shadow:none;border-style:dashed;margin:12px 0 0;padding:16px">
+      <ol style="margin:0;padding-left:20px;font-size:14.5px;line-height:2.1">
+        <li>I have two favourite films. One is … and ________________ is … .</li>
+        <li>I have five close friends. Two of them are good at sport, and ________________ … . <span style="color:#8b93a5;font-size:12.5px">(все пятеро учтены)</span></li>
+        <li>When I want ________________ cup of tea, I usually … .</li>
+        <li>I often talk to my family about ________________ … .</li>
+        <li>Some of my classmates want to go to university, and ________________ … .</li>
+        <li>My best friend and I always help ________________ with English.</li>
+      </ol>
+      <textarea id="free1" placeholder="Напиши свои ответы здесь (6 строк)…"></textarea>
+      <div class="subactions" style="margin-top:10px;padding-top:10px">
+        <button data-analyse="free1">Analyse my «другие»</button>
+        <button id="sampleBtn">Sample answers</button>
+      </div>
+      <div class="analyse" id="free1an"></div>
+      <p class="anote" id="free1note"></p>
+      <div id="samples" class="hide" style="margin-top:14px;border-top:1px dashed #d8dde7;padding-top:12px">
+        <p style="margin:0 0 6px;font-size:12.5px;letter-spacing:.6px;text-transform:uppercase;color:#5b6580">Model answers — все шесть форм по одному разу</p>
+        <p style="margin:6px 0;font-size:14px"><b>Model 1 (проще)</b></p>
+        <ol style="margin:0 0 10px;padding-left:20px;font-size:14px;line-height:1.85">
+          <li>I have two favourite films. One is <i>«The Irony of Fate»</i> and <b>the other</b> is <i>«Interstellar»</i>.</li>
+          <li>I have five close friends. Two of them are good at sport, and <b>the others</b> play music.</li>
+          <li>When I want <b>another</b> cup of tea, I usually make it myself.</li>
+          <li>I often talk to my family about <b>other</b> things — school, films and plans for the weekend.</li>
+          <li>Some of my classmates want to go to university, and <b>the others</b> want to start working.</li>
+          <li>My best friend and I always help <b>each other</b> with English.</li>
+        </ol>
+        <p style="margin:6px 0;font-size:14px"><b>Model 2 (богаче, B1)</b></p>
+        <ol style="margin:0;padding-left:20px;font-size:14px;line-height:1.85">
+          <li>One is a comedy I’ve seen ten times, and <b>the other</b> is a documentary about the ocean.</li>
+          <li>Two of them are good at sport, and <b>the others</b> prefer music.</li>
+          <li>When I want <b>another</b> cup of tea, I take my favourite big mug and go back to my homework.</li>
+          <li>I often talk to my family about <b>other</b> people’s news — who moved to <b>another</b> city, who got married.</li>
+          <li>Some of my classmates want to go to university, and <b>the others</b> are still choosing.</li>
+          <li>We always help <b>each other</b> with English: I explain grammar and she checks my pronunciation.</li>
+        </ol>
+        <p style="margin:10px 0 0;font-size:13px;color:#4a5468"><b>Важно:</b> в п. 4 возможен и вариант <i>I often talk to my family about <b>others</b></i> — «про других людей» (реже, но грамматично). Тогда в п. 4 стоит <b>others</b>, и набор шести форм всё равно полный.</p>
+      </div>
+    </div>
+
+    <div class="subactions">
+      <button class="primary" data-check="1">Check Activity 1</button>
+      <button data-show="1">Show answers</button>
+      <button data-reset="1" class="ghost">Reset</button>
+      <span class="subscore" id="score1"></span>
+    </div>
+  </section>
+
+  <!-- ================= ACTIVITY 2 ================= -->
+  <section class="card" id="act2">
+    <h2>Activity 2. Сколько «других» вокруг? <span class="badge">meaning</span></h2>
+    <p class="lead">Заполни пропуски в двух историях — примеров не дано, все пропуски пустые. Затем — Step 4: своя история.</p>
+
+    <div class="bank" id="bank2"></div>
+
+    <h3>Story A · The twin sisters</h3>
+    <div class="story" id="a2a"></div>
+
+    <h3>Story B · Moving to a new house</h3>
+    <div class="story" id="a2b"></div>
+
+    <h3>Step 4 · Ты — рассказчик <span class="badge" style="background:#fdf1ec;color:#a83f27">not scored</span></h3>
+    <p class="hintline">Расскажи свою историю (6–8 предложений), используя минимум <b>пять</b> разных форм, и хотя бы одну «друг друга».</p>
+    <textarea id="free2" placeholder="Last year my family and I…"></textarea>
+    <div class="subactions" style="margin-top:10px;padding-top:10px">
+      <button data-analyse="free2">Analyse my «другие»</button>
+      <button id="sampleBtn2">Sample answer</button>
+    </div>
+    <div class="analyse" id="free2an"></div>
+    <p class="anote" id="free2note"></p>
+    <div id="samples2" class="hide" style="margin-top:14px;border-top:1px dashed #d8dde7;padding-top:12px">
+      <p style="margin:0 0 6px;font-size:12.5px;letter-spacing:.6px;text-transform:uppercase;color:#5b6580">Model story — шесть форм: another · the other · the others · each other · other · others</p>
+      <p style="margin:6px 0;font-size:14.5px;line-height:1.85;font-style:italic">Last autumn my family and I moved to <b>another</b> flat in a quieter area. Our new flat has only two rooms, so my brother and I share one and our parents have <b>the other</b>. At first I didn’t like the place: some of the neighbours were very friendly, and <b>the others</b> hardly said hello. Now I know them all. My brother and I decorated our room ourselves and never argued with <b>each other</b>. On sunny days we play football outside; on <b>other</b> days we stay at home and watch films. My mother wants to buy <b>another</b> sofa for the living room, because the old one is too small for all four of us. Some of my classmates still live near our old flat, and <b>others</b> have moved away, so I don’t see them very often. But my brother and I always do our homework together and help <b>each other</b>, and that makes any new place feel like home.</p>
+      <p style="margin:10px 0 0;font-size:13px;color:#4a5468"><b>Как считать формы:</b> <b>another</b> — moved to another flat · <b>the other</b> — parents have the other (of two rooms) · <b>the others</b> — some of the neighbours … the others · <b>each other</b> — argued with each other · <b>other</b> — on other days · <b>others</b> — some classmates … others. В конце снова <b>each other</b> — повтор не считается новой формой.</p>
+    </div>
+
+    <div class="subactions">
+      <button class="primary" data-check="2">Check Activity 2</button>
+      <button data-show="2">Show answers</button>
+      <button data-reset="2" class="ghost">Reset</button>
+      <span class="subscore" id="score2"></span>
+    </div>
+
+    <details style="margin-top:18px">
+      <summary>Answer keys (open only after checking)</summary>
+      <div class="keys" id="keys"></div>
+    </details>
+  </section>
+
+  <div class="card">
+    <h3 style="margin-top:0">Watch out · самые частые ошибки</h3>
+    <div class="rule" style="border-left-color:#c03737">
+      <div><b>another people</b> ✗ → <b>other people</b> ✓ (another + только единственное число)</div>
+      <div><b>others people</b> ✗ → <b>other people</b> ✓ (others — без существительного)</div>
+      <div><b>an other</b> ✗ → <b>another</b> ✓</div>
+      <div><b>the other</b> при трёх и более предметах → <b>the others</b> / <b>another</b></div>
+      <div><b>each another</b> ✗ → <b>each other</b> / <b>one another</b> ✓</div>
+      <div><b>others ≠ the others:</b> <i>some people → <b>others</b></i> (список открыт); <i>some of my friends / five students in our group → <b>the others</b></i> (весь остаток). Тест: подставьте <i>the rest</i> — звучит как правда → <b>the others</b>.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- helpers ---------- */
+  const $  = (s, r) => (r||document).querySelector(s);
+  const $$ = (s, r) => Array.prototype.slice.call((r||document).querySelectorAll(s));
+
+  function norm(s){
+    return String(s||"")
+      .toLowerCase()
+      .replace(/[\u2018\u2019`]/g, "'")
+      .replace(/[.,!?;:"«»()]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+  function mk(tag, cls, txt){
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (txt != null) e.textContent = txt;
+    return e;
+  }
+  function lastInput(){ return window.__lastInput && document.body.contains(window.__lastInput) ? window.__lastInput : null; }
+
+  /* ---------- data ---------- */
+  const BANK = ["another","other","the other","others","the others","each other","one another"];
+
+  const A1A = [
+    {n:1,  t:"I don’t like this coffee. Could I have ___ cup, please?", a:["another"]},
+    {n:2,  t:"I have two sisters. One is a doctor, and ___ is a teacher.", a:["the other"]},
+    {n:3,  t:"Some people learn languages for work, and ___ learn them for pleasure.", a:["others"]},
+    {n:4,  t:"Our house is on one side of the street — the sunny side — and the shop is on ___ side.", a:["the other"]},
+    {n:5,  t:"Five students in our group passed the test; ___ failed it.", a:["the others"]},
+    {n:6,  t:"This pen doesn’t work. Give me ___ one.", a:["another","another one"]},
+    {n:7,  t:"Don’t compare yourself with ___ people all the time — just be better than you were yesterday.", a:["other"]},
+    {n:8,  t:"He’s always ready to help ___ — even people he has never met.", a:["others"]},
+    {n:9,  t:"My brother and I look very alike, but we are very different from ___.", a:["each other","one another"]},
+    {n:10, t:"You’ve already eaten three sandwiches. Do you really want ___?", a:["another","another one"]}
+  ];
+
+  const A1B = [
+    {n:11, pre:"These shoes are too small. Can I try", opts:["another","the others"], post:"size?", a:"another"},
+    {n:12, pre:"Where are", opts:["the others","others"], post:"? Did they all go home?", a:"the others"},
+    {n:13, pre:"Kate and Ann are neighbours; they always borrow things from", opts:["another","each other"], post:".", a:"each other"},
+    {n:14, pre:"Some people like the city, but", opts:["other","others"], post:"prefer the countryside.", a:"others"},
+    {n:15, pre:"I’ve read this book twice. Let’s take", opts:["another","other"], post:"one from the library.", a:"another"},
+    {n:16, pre:"Two of the walls are grey and", opts:["the other","other"], post:"wall is white.", a:"the other"},
+    {n:17, pre:"Ben isn’t like his brother: he’s much lazier than", opts:["the other","each other"], post:".", a:"the other"},
+    {n:18, pre:"We’ve got no more ice cream. Would you like", opts:["other","another"], post:"dessert?", a:"another"}
+  ];
+
+  const A1C = [
+    {n:19, t:"I have two pens: a blue one and a red one. The blue one is mine, and another is yours.", w:"another", a:"the other"},
+    {n:20, t:"Some children are playing outside, and other are doing their homework.", w:"other", a:"others"},
+    {n:21, t:"She doesn’t like this dress. She wants the other dress — any dress, just different.", w:"the other", a:"another"},
+    {n:22, t:"Three tourists went to the museum and the other went to the park.", w:"the other", a:"the others"},
+    {n:23, t:"My cousins visit us every summer, and we always phone each another.", w:"each another", a:"each other"},
+    {n:24, t:"Don’t worry about others people — think about yourself.", w:"others", a:"other"}
+  ];
+
+  const A2A = {
+    text: "Lena and Sveta are twins, but they are not like _{2}_ at all. Lena is tall and short-haired, and _{2}_ sister has long curly hair. " +
+          "Lena loves maths and can solve problems for hours, while Sveta has read more than fifty books this year and always wants _{3}_ one. " +
+          "Some of their classmates think twins are boring because they are so alike, and _{4}_ say twins are lucky. " +
+          "Their house has two sides — a sunny side and a quiet side — and the twins share one room on _{5}_ side, the quiet one. In the evening, when the homework is done, one of the twins washes the dishes and _{6}_ cleans the room. " +
+          "At school the girls hardly see _{7}_: Lena studies in a maths club, Sveta in a drama studio. " +
+          "Their parents often say that _{8}_ families with twins have an easier life. Lena wants a kitten for her birthday; Sveta wants a violin — that’s quite _{9}_ thing. " +
+          "Last Saturday five girls from their class came to visit; two left early and _{10}_ stayed until nine. " +
+          "And at the end of the day the twins always tell _{11}_ everything.",
+    items: [
+      {n:1, a:["each other","one another"]},
+      {n:2, a:["the other"]},
+      {n:3, a:["another"]},
+      {n:4, a:["the others"]},
+      {n:5, a:["the other"]},
+      {n:6, a:["the other"]},
+      {n:7, a:["each other","one another"]},
+      {n:8, a:["other"]},
+      {n:9, a:["another"]},
+      {n:10, a:["the others"]},
+      {n:11, a:["each other","one another"]}
+    ]
+  };
+
+  const A2B = {
+    text: "Last June my family moved to _{12}_ flat in a quiet area. Our flat is on the second floor of a small white building; two families live on our floor — one is a young couple, and _{13}_ is an old lady who keeps a broom by the door. " +
+          "Some of the neighbours are very friendly, and _{14}_ hardly say a word — nobody is in between. " +
+          "There are two big trees under my window: one is a birch, and _{15}_ is an oak. On sunny days I do my homework under the birch; on _{16}_ days — and there are many of them in our climate — I stay inside. " +
+          "My parents want to buy _{17}_ sofa for the living room because the old one is too small for all four of us. Our new flat is small: it has only two rooms, so my sister and I share one and our parents have the rest of the space. " +
+          "My sister and I decorated our room ourselves: we chose every poster together and never argued with _{18}_. " +
+          "Five of our friends helped us carry the boxes; _{19}_ came in the evening and brought us pizza. " +
+          "At the end of the day I was so tired that I could hardly walk from one room to _{20}_. " +
+          "And now, a year later, my sister and I still do our homework together and help _{21}_ every evening.",
+    items: [
+      {n:12, a:["another"]},
+      {n:13, a:["the other"]},
+      {n:14, a:["the others"]},
+      {n:15, a:["the other"]},
+      {n:16, a:["other"]},
+      {n:17, a:["another"]},
+      {n:18, a:["each other","one another"]},
+      {n:19, a:["the others"]},
+      {n:20, a:["the other"]},
+      {n:21, a:["one another","each other"]}
+    ]
+  };
+
+  /* ---------- registry ---------- */
+  const ITEMS = [];        // all gradable items
+  const INPUTS = [];       // text inputs
+  const CHOICES = [];      // mc items
+  const ERRORS = [];       // error-correction items
+
+  function regGap(act, input, answers, fbEl){
+    input.dataset.act = act;
+    ITEMS.push({kind:"gap", act, answers, input, fb:fbEl, done:false, right:false});
+    INPUTS.push(input);
+    input.addEventListener("input", refreshProgress);
+  }
+
+  /* ---------- banks ---------- */
+  function firstEmptyGap(host){
+    const found = $$("input.gap", host).filter(i => i.value.trim() === "");
+    return found[0] || null;
+  }
+  function buildBank(el){
+    BANK.forEach(w => {
+      const c = mk("button","chip",w);
+      c.type = "button";
+      c.addEventListener("click", () => {
+        let t = lastInput();
+        if (!t || !el.closest("section").contains(t)){
+          t = firstEmptyGap(el.closest("section"));
+        }
+        if (!t) { flash(el); return; }
+        t.value = w;
+        t.classList.remove("ok","bad");
+        const fb = t.__fb;
+        if (fb) { fb.textContent = ""; fb.className = "fb"; }
+        t.focus({preventScroll:true});
+        refreshProgress();
+      });
+      el.appendChild(c);
+    });
+  }
+  function flash(el){
+    el.animate ? el.animate([{opacity:.35},{opacity:1}],{duration:320}) : null;
+  }
+
+  /* ---------- render: gap sentences (A1 Part A) ---------- */
+  function renderGaps(hostId, list, act){
+    const host = document.getElementById(hostId);
+    list.forEach(it => {
+      const row = mk("div","q");
+      row.appendChild(mk("span","n", it.n + "."));
+      const body = mk("div","body");
+      const parts = it.t.split("___");
+      parts.forEach((p, i) => {
+        if (p) body.appendChild(document.createTextNode(p));
+        if (i < parts.length - 1){
+          const inp = mk("input","gap");
+          inp.type = "text"; inp.autocomplete = "off"; inp.spellcheck = false;
+          inp.setAttribute("aria-label","gap " + it.n);
+          const fb = mk("span","fb");
+          inp.__fb = fb;
+          inp.addEventListener("focus", () => { window.__lastInput = inp; });
+          body.appendChild(inp);
+          body.appendChild(fb);
+          regGap(act, inp, it.a, fb);
+        }
+      });
+      if (it.hint) body.appendChild(mk("span","hint", it.hint));
+      row.appendChild(body);
+      host.appendChild(row);
+    });
+  }
+
+  /* ---------- render: multiple choice (Part B) ---------- */
+  function renderChoices(hostId, list, act){
+    const host = document.getElementById(hostId);
+    list.forEach(it => {
+      const row = mk("div","q mc");
+      row.appendChild(mk("span","n", it.n + "."));
+      const body = mk("div","body");
+      body.appendChild(document.createTextNode(it.pre + " "));
+      const wrap = mk("span","opts");
+      const btns = [];
+      it.opts.forEach(o => {
+        const b = mk("button","opt", o);
+        b.type = "button";
+        b.addEventListener("click", () => {
+          btns.forEach(x => x.classList.remove("sel","ok","bad"));
+          b.classList.add("sel");
+          rec.sel = o;
+          refreshProgress();
+        });
+        btns.push(b);
+        wrap.appendChild(b);
+      });
+      body.appendChild(wrap);
+      body.appendChild(document.createTextNode(" " + it.post));
+      row.appendChild(body);
+      host.appendChild(row);
+
+      const rec = {kind:"mc", act, answers:[it.a], btns, sel:null, done:false, right:false};
+      CHOICES.push(rec);
+      ITEMS.push(rec);
+    });
+  }
+
+  /* ---------- render: error correction (Part C) ---------- */
+  function renderErrors(hostId, list, act){
+    const host = document.getElementById(hostId);
+    list.forEach(it => {
+      const row = mk("div","q");
+      row.style.display = "block";
+      row.appendChild(mk("span","n", it.n + ".")).style.cssText = "display:inline-block;width:24px";
+      const sent = mk("div","sentence");
+      const toks = [];
+
+      const idx = it.t.indexOf(it.w);
+      const pre = it.t.slice(0, idx);
+      const post = it.t.slice(idx + it.w.length);
+
+      pre.split(/\s+/).filter(Boolean).forEach(w => addTok(w));
+      addTok(it.w, true);
+      post.split(/\s+/).filter(Boolean).forEach(w => addTok(w));
+
+      function addTok(word, isWrong){
+        if (toks.length) sent.appendChild(document.createTextNode(" "));
+        const t = mk("span","tok", word);
+        t.dataset.wrong = isWrong ? "1" : "0";
+        t.addEventListener("click", () => {
+          toks.forEach(x => { if (!x.classList.contains("right") && !x.classList.contains("wrong")) x.classList.remove("sel"); });
+          t.classList.add("sel");
+          rec.pick = t;
+          fixrow.classList.remove("hide");
+          fixlab.textContent = "“" + word + "” → ";
+          refreshProgress();
+        });
+        toks.push(t);
+        sent.appendChild(t);
+        return t;
+      }
+
+      row.appendChild(sent);
+
+      const fixrow = mk("div","fixrow hide");
+      const fixlab = mk("span", null, "");
+      fixrow.appendChild(fixlab);
+      const sel = mk("select", null);
+      const blank = mk("option", null, "choose…");
+      blank.value = "";
+      sel.appendChild(blank);
+      BANK.forEach(w => {
+        const o = mk("option", null, w);
+        o.value = w;
+        sel.appendChild(o);
+      });
+      sel.addEventListener("change", () => { rec.rep = sel.value; refreshProgress(); });
+      fixrow.appendChild(sel);
+      row.appendChild(fixrow);
+      host.appendChild(row);
+
+      const rec = {kind:"err", act, answers:[it.a], toks, sel, pick:null, rep:"", rightPick:null, done:false, right:false};
+      rec.rightPick = toks.find(t => t.dataset.wrong === "1");
+      ERRORS.push(rec);
+      ITEMS.push(rec);
+    });
+  }
+
+  /* ---------- render: story ---------- */
+  function renderStory(hostId, story, act){
+    const host = document.getElementById(hostId);
+    const parts = story.text.split(/\{[^}]+\}|_\{(\d+)\}_/);
+    // use a simpler manual scan instead of relying on capture groups
+    const chunks = [];
+    const re = /\{(\d+)\}|_\{(\d+)\}_/g;
+    let last = 0, m;
+    const nodes = [];
+    while ((m = re.exec(story.text)) !== null){
+      const before = story.text.slice(last, m.index);
+      if (before) nodes.push({type:"text", v:before});
+      const num = m[1] || m[2];
+      nodes.push({type:"gap", n:parseInt(num,10)});
+      last = re.lastIndex;
+    }
+    if (last < story.text.length) nodes.push({type:"text", v:story.text.slice(last)});
+
+    nodes.forEach(nd => {
+      if (nd.type === "text"){ host.appendChild(document.createTextNode(nd.v)); return; }
+      if (nd.n === 0){
+        const s = mk("span","fixed","each other");
+        host.appendChild(document.createTextNode(" "));
+        host.appendChild(s);
+        return;
+      }
+      const item = story.items.find(x => x.n === nd.n);
+      const inp = mk("input","gap");
+      inp.type = "text"; inp.autocomplete = "off"; inp.spellcheck = false;
+      inp.setAttribute("aria-label","gap " + nd.n);
+      inp.addEventListener("focus", () => { window.__lastInput = inp; });
+      const fb = mk("span","fb");
+      inp.__fb = fb;
+      host.appendChild(document.createTextNode(" "));
+      host.appendChild(inp);
+      host.appendChild(mk("sup", null, String(nd.n))).style.cssText = "color:#a3abbd;font-size:10.5px";
+      host.appendChild(fb);
+      regGap(act, inp, item ? item.a : [], fb);
+    });
+
+    var _unused = parts; // keep parser simple
+  }
+
+  /* ---------- checking ---------- */
+  function checkGap(rec){
+    const val = norm(rec.input.value);
+    const ok = val !== "" && rec.answers.some(a => norm(a) === val);
+    rec.done = rec.input.value.trim() !== "";
+    rec.right = ok;
+    rec.input.classList.remove("ok","bad");
+    rec.input.classList.add(ok ? "ok" : "bad");
+    if (!ok){
+      rec.fb.textContent = "→ " + rec.answers[0];
+      rec.fb.className = "fb";
+    } else {
+      rec.fb.textContent = "✓";
+      rec.fb.className = "fb good";
+    }
+    return ok;
+  }
+  function checkMC(rec){
+    rec.done = !!rec.sel;
+    const ok = rec.sel === rec.answers[0];
+    rec.right = ok;
+    rec.btns.forEach(b => {
+      b.classList.remove("sel","ok","bad");
+      if (b.textContent === rec.answers[0]) b.classList.add("ok");
+      else if (b.textContent === rec.sel) b.classList.add("bad");
+    });
+    return ok;
+  }
+  function checkErr(rec){
+    rec.done = !!(rec.pick && rec.rep);
+    const okPick = rec.pick === rec.rightPick;
+    const okRep = norm(rec.rep) === norm(rec.answers[0]);
+    rec.right = okPick && okRep;
+    rec.toks.forEach(t => t.classList.remove("sel"));
+    if (rec.pick && !okPick) rec.pick.classList.add("wrong");
+    rec.rightPick.classList.add("right");
+    if (okPick && okRep) rec.rightPick.classList.add("right");
+    rec.sel.style.borderColor = okRep ? "#1f8a5b" : "#c03737";
+    return rec.right;
+  }
+
+  function checkActivity(act){
+    let total = 0, right = 0;
+    ITEMS.filter(i => i.act === act).forEach(rec => {
+      total++;
+      let ok = false;
+      if (rec.kind === "gap") ok = checkGap(rec);
+      else if (rec.kind === "mc") ok = checkMC(rec);
+      else ok = checkErr(rec);
+      if (ok) right++;
+    });
+    const box = document.getElementById("score" + act);
+    if (box) box.textContent = right + " / " + total + " correct";
+    refreshProgress();
+    return {right, total};
+  }
+
+  function revealActivity(act){
+    ITEMS.filter(i => i.act === act).forEach(rec => {
+      if (rec.kind === "gap"){
+        rec.input.value = rec.answers[0];
+        rec.input.classList.remove("bad");
+        rec.input.classList.add("ok");
+        rec.fb.textContent = "";
+        rec.fb.className = "fb";
+      } else if (rec.kind === "mc"){
+        rec.sel = rec.answers[0];
+        rec.done = true;
+        rec.btns.forEach(b => {
+          b.classList.remove("sel","bad");
+          if (b.textContent === rec.answers[0]) b.classList.add("ok");
+        });
+      } else {
+        rec.pick = rec.rightPick;
+        rec.rep = rec.answers[0];
+        rec.sel.value = rec.answers[0];
+        rec.sel.style.borderColor = "#1f8a5b";
+        rec.toks.forEach(t => t.classList.remove("wrong","sel"));
+        rec.rightPick.classList.add("right");
+      }
+    });
+    refreshProgress();
+  }
+
+  function resetActivity(act){
+    ITEMS.filter(i => i.act === act).forEach(rec => {
+      rec.done = false; rec.right = false;
+      if (rec.kind === "gap"){
+        rec.input.value = "";
+        rec.input.classList.remove("ok","bad");
+        rec.fb.textContent = "";
+        rec.fb.className = "fb";
+      } else if (rec.kind === "mc"){
+        rec.sel = null;
+        rec.btns.forEach(b => b.classList.remove("sel","ok","bad"));
+      } else {
+        rec.pick = null; rec.rep = "";
+        rec.sel.value = "";
+        rec.sel.style.borderColor = "";
+        rec.toks.forEach(t => t.classList.remove("sel","right","wrong"));
+      }
+    });
+    const box = document.getElementById("score" + act);
+    if (box) box.textContent = "";
+    refreshProgress();
+  }
+
+  function refreshProgress(){
+    let filled = 0;
+    ITEMS.forEach(rec => {
+      if (rec.kind === "gap" && rec.input.value.trim() !== "") filled++;
+      if (rec.kind === "mc" && rec.sel) filled++;
+      if (rec.kind === "err" && rec.pick && rec.rep) filled++;
+    });
+    const pct = ITEMS.length ? Math.round(filled / ITEMS.length * 100) : 0;
+    $("#fill").style.width = pct + "%";
+    const right = ITEMS.filter(i => i.right).length;
+    $("#score").innerHTML = right + " / " + ITEMS.length + " <span>correct · " + filled + " filled</span>";
+  }
+
+  /* ---------- free-writing analyser ---------- */
+  const FORMS = [
+    {key:"the others", re:/\bthe others\b/gi, label:"the others"},
+    {key:"the other",  re:/\bthe other\b/gi,  label:"the other"},
+    {key:"one another",re:/\bone another\b/gi,label:"one another"},
+    {key:"each other", re:/\beach other\b/gi, label:"each other"},
+    {key:"others",     re:/\bothers\b/gi,     label:"others"},
+    {key:"another",    re:/\banother\b/gi,    label:"another"},
+    {key:"other",      re:/\bother\b/gi,      label:"other"}
+  ];
+  function analyse(id){
+    const ta = document.getElementById(id);
+    const out = document.getElementById(id + "an");
+    const note = document.getElementById(id + "note");
+    let text = " " + ta.value + " ";
+    const counts = {};
+    FORMS.forEach(f => {
+      const found = text.match(f.re);
+      counts[f.key] = found ? found.length : 0;
+      if (found) text = text.replace(f.re, " # ");
+    });
+    out.innerHTML = "";
+    let distinct = 0;
+    FORMS.forEach(f => {
+      if (!f.key) return;
+      const t = mk("span","tag" + (counts[f.key] ? " hit" : ""), f.label + (counts[f.key] ? " × " + counts[f.key] : ""));
+      if (counts[f.key]) distinct++;
+      out.appendChild(t);
+    });
+    const target = id === "free1" ? 5 : 5;
+    if (counts["each other"] + counts["one another"] === 0){
+      note.innerHTML = "Пока нет ни одной формы «друг друга» — попробуй добавить <b>each other</b>.";
+    } else if (distinct >= target){
+      note.innerHTML = "Отлично: использовано <b>" + distinct + "</b> разных форм (цель — " + target + "). Проверь только, что после <i>another</i> нет существительного во множественном числе.";
+    } else {
+      note.innerHTML = "Использовано <b>" + distinct + "</b> разных форм из " + target + " нужных — добавь ещё.";
+    }
+  }
+
+  /* ---------- keys ---------- */
+  function buildKeys(){
+    const k = document.getElementById("keys");
+    const a1 = "1 another · 2 the other · 3 others · 4 the other · 5 the others · 6 another · 7 other · 8 others · 9 each other · 10 another";
+    const b1 = "11 another · 12 the others · 13 each other · 14 others · 15 another · 16 the other · 17 the other · 18 another";
+    const c1 = "19 another → <b>the other</b> · 20 other → <b>others</b> · 21 the other → <b>another</b> · 22 the other → <b>the others</b> · 23 each another → <b>each other</b> · 24 others people → <b>other</b> people";
+    const a2 = "1 each other / one another (раньше был показан как пример) · 2 the other · 3 another · 4 the others (some of their classmates) · 5 the other (две стороны дома) · 6 the other · 7 each other · 8 other · 9 another · 10 the others · 11 each other";
+    const b2 = "12 another · 13 the other · 14 the others (some of the neighbours) · 15 the other · 16 other · 17 another · 18 each other · 19 the others · 20 the other (две комнаты) · 21 one another / each other";
+    const d1 = "1 the other · 2 the others · 3 another · 4 other (или others, если «про других людей») · 5 the others · 6 each other — модели см. в кнопке «Sample answers»";
+    k.innerHTML = "<p style='margin:0 0 8px'><b>Activity 1 · A</b> " + a1 + "</p>" +
+                  "<p style='margin:0 0 8px'><b>Activity 1 · B</b> " + b1 + "</p>" +
+                  "<p style='margin:0 0 8px'><b>Activity 1 · C</b> " + c1 + "</p>" +
+                  "<p style='margin:0 0 8px'><b>Activity 1 · D</b> " + d1 + "</p>" +
+                  "<p style='margin:0 0 8px'><b>Story A</b> " + a2 + "</p>" +
+                  "<p style='margin:0'><b>Story B</b> " + b2 + "</p>";
+  }
+
+  /* ---------- init ---------- */
+  buildBank(document.getElementById("bank1"));
+  buildBank(document.getElementById("bank2"));
+
+  renderGaps("a1a", A1A, 1);
+  renderChoices("a1b", A1B, 1);
+  renderErrors("a1c", A1C, 1);
+  renderStory("a2a", A2A, 2);
+  renderStory("a2b", A2B, 2);
+  buildKeys();
+
+  document.addEventListener("focusin", e => {
+    if (e.target && e.target.classList && e.target.classList.contains("gap")) window.__lastInput = e.target;
+  });
+
+  $$("[data-check]").forEach(b => b.addEventListener("click", () => {
+    const r = checkActivity(parseInt(b.dataset.check, 10));
+    b.textContent = r.right === r.total ? "All correct ✓ (check again)" : "Check again";
+  }));
+  $$("[data-show]").forEach(b => b.addEventListener("click", () => revealActivity(parseInt(b.dataset.show, 10))));
+  $$("[data-reset]").forEach(b => b.addEventListener("click", () => {
+    const a = parseInt(b.dataset.reset, 10);
+    resetActivity(a);
+    const cb = $("[data-check='" + a + "']");
+    if (cb) cb.textContent = "Check Activity " + a;
+  }));
+  $$("[data-analyse]").forEach(b => b.addEventListener("click", () => analyse(b.dataset.analyse)));
+
+  function wireSamples(btnId, boxId, show, hide){
+    const b = document.getElementById(btnId), box = document.getElementById(boxId);
+    if (!b || !box) return;
+    b.addEventListener("click", () => {
+      box.classList.toggle("hide");
+      b.textContent = box.classList.contains("hide") ? show : hide;
+    });
+  }
+  wireSamples("sampleBtn", "samples", "Sample answers", "Hide sample answers");
+  wireSamples("sampleBtn2", "samples2", "Sample answer", "Hide sample answer");
+
+  $("#checkAll").addEventListener("click", () => {
+    const r1 = checkActivity(1), r2 = checkActivity(2);
+    const ok = r1.right + r2.right, tot = r1.total + r2.total;
+    $("#checkAll").textContent = ok === tot ? "All correct ✓" : "Check all";
+  });
+  $("#showAll").addEventListener("click", () => { revealActivity(1); revealActivity(2); });
+  $("#resetAll").addEventListener("click", () => {
+    resetActivity(1); resetActivity(2);
+    document.getElementById("free1").value = "";
+    document.getElementById("free2").value = "";
+    document.getElementById("free1an").innerHTML = "";
+    document.getElementById("free2an").innerHTML = "";
+    document.getElementById("free1note").textContent = "";
+    document.getElementById("free2note").textContent = "";
+    $("#checkAll").textContent = "Check all";
+    document.querySelectorAll("[data-check]").forEach(b => b.textContent = "Check Activity " + b.dataset.check);
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
+
+  // Enter key in a gap jumps to the next gap
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Enter") return;
+    const t = e.target;
+    if (!t || !t.classList || !t.classList.contains("gap")) return;
+    e.preventDefault();
+    const i = INPUTS.indexOf(t);
+    const next = INPUTS[i + 1];
+    if (next) next.focus();
+  });
+
+
+  /* ---------- print / PDF version ---------- */
+  const PRINT_DOC = {"style": "\n  @page {\n    size: A4;\n    margin: 15mm 16mm 16mm 16mm;\n    @bottom-center {\n      content: \"\u00ab\u0414\u0440\u0443\u0433\u043e\u0439\u00bb in English \u00b7 interactive practice \u00b7 page \" counter(page) \" / \" counter(pages);\n      font-family: \"DejaVu Sans\", sans-serif;\n      font-size: 7.6pt;\n      color: #7b8494;\n    }\n  }\n  * { box-sizing: border-box; }\n  body {\n    font-family: \"DejaVu Sans\", Arial, sans-serif;\n    font-size: 9pt;\n    line-height: 1.34;\n    color: #1a1f2b;\n    margin: 0;\n  }\n  h1 { font-size: 16pt; margin: 0 0 2mm; letter-spacing: -.2pt; }\n  .topline { border-bottom: 2.2pt solid #1a1f2b; padding-bottom: 3mm; margin-bottom: 4mm; }\n  .topline .sub { font-size: 8.4pt; color: #5d6679; margin: 0; }\n  h2 {\n    font-size: 11.5pt; margin: 3.4mm 0 1.5mm; padding-bottom: 1.2mm;\n    border-bottom: 1.4pt solid #1a1f2b;\n  }\n  h2.first { margin-top: 0; }\n  h3 {\n    font-size: 8.1pt; letter-spacing: .6pt; text-transform: uppercase;\n    color: #5d6679; margin: 2.6mm 0 1mm;\n  }\n  p { margin: 1.6mm 0; }\n  .lead { color: #4a5364; font-size: 8.8pt; margin-bottom: 2.5mm; }\n  .rulecard {\n    background: #f5f6f9; border-left: 2.6pt solid #c14b30;\n    padding: 2.2mm 3mm; font-size: 8pt; line-height: 1.4; margin: 0 0 2.4mm;\n  }\n  .rulecard b { color: #a83f27; }\n  .rulecard .tip { display: block; margin-top: 1.6mm; color: #4a5364; font-size: 8pt; }\n  .wordbank {\n    border: 1.1pt solid #1a1f2b; border-radius: 1.6mm;\n    padding: 1.4mm 3mm; font-size: 9pt; letter-spacing: .2pt; margin: 0 0 3mm;\n  }\n  .wordbank span { color: #9aa2b2; margin: 0 1.6mm; }\n  table { width: 100%; border-collapse: collapse; margin: 1.5mm 0 3mm; }\n  th {\n    text-align: left; font-size: 7.4pt; text-transform: uppercase; letter-spacing: .5pt;\n    color: #5d6679; padding: 1.2mm 2mm; border-bottom: 1pt solid #c8ced9;\n  }\n  td { padding: 1.15mm 2mm; border-bottom: .5pt solid #e2e5ec; vertical-align: top; font-size: 9.1pt; }\n  td.num { width: 7mm; color: #8b93a5; font-size: 8.4pt; }\n    .gap { display: inline-block; min-width: 30mm; border-bottom: .9pt solid #1a1f2b; }\n  .story {\n    background: #fdfcf7; border: .6pt solid #e3ddcc; border-radius: 1.6mm;\n    padding: 2.2mm 3mm; line-height: 1.88; font-size: 8.7pt; margin-bottom: 2mm;\n  }\n  .story .gap { min-width: 21mm; }\n  .story .fixed { background: #eceff5; border-radius: 1mm; padding: 0 1.4mm; font-weight: bold; }\n  ol { padding-left: 5.5mm; margin: 1.5mm 0 3mm; }\n  li { margin: 1.1mm 0; }\n  ol.opts li b { color: #1a1f2b; }\n  ol.opts li { font-size: 9.1pt; }\n  .sentence { line-height: 2.1; }\n  .fixslot { display: inline-block; min-width: 22mm; border-bottom: .9pt solid #1a1f2b; margin-left: 2mm; }\n  .lines div { border-bottom: .6pt solid #b9c0cd; height: 5mm; }\n  .footnote { font-size: 8pt; color: #5d6679; border-top: .6pt dashed #c8ced9; padding-top: 2mm; margin-top: 3mm; }\n  .keys { font-size: 7.9pt; }\n  .keys p { margin: 1.1mm 0; }\n  .keys b { color: #a83f27; }\n  .keytable { width: 100%; border-collapse: collapse; }\n  .keytable td { border-bottom: .5pt solid #e6e9f0; padding: .9mm 2mm; font-size: 8.1pt; vertical-align: top; }\n  .keytable td.n { width: 8mm; color: #8b93a5; }\n  .keytable td.ans { width: 27mm; font-weight: bold; color: #12653f; }\n  .pagebreak { page-break-before: always; }\n  .avoid { page-break-inside: avoid; }\n  .twocol { column-count: 2; column-gap: 7mm; }\n  .twocol ol { margin-top: 0; }\n  .badge {\n    float: right; font-size: 7.2pt; letter-spacing: .7pt; text-transform: uppercase;\n    background: #eceff5; color: #5d6679; padding: .6mm 2mm; border-radius: 3mm; font-weight: bold;\n  }\n", "body": "\n\n<!-- =============== PAGE 1: WORKSHEET, ACTIVITY 1 =============== -->\n<div class=\"topline\">\n  <h1>\u00ab\u0414\u0440\u0443\u0433\u043e\u0439\u00bb in English \u2014 practice worksheet</h1>\n  <p class=\"sub\">A2\u2013B1 \u00b7 another \u00b7 other \u00b7 the other \u00b7 others \u00b7 the others \u00b7 each other / one another</p>\n  <p class=\"sub\">Name ______________________________________ \u00b7 Date ____________________</p>\n</div>\n\n<div class=\"rulecard\">\n  <b>another</b> = \u0435\u0449\u0451 \u043e\u0434\u0438\u043d, \u0435\u0449\u0451 \u043e\u0434\u043d\u0430 (\u043b\u044e\u0431\u0430\u044f) \u2192 + \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0438\u0442\u0435\u043b\u044c\u043d\u043e\u0435 \u0432 \u0435\u0434\u0438\u043d\u0441\u0442\u0432\u0435\u043d\u043d\u043e\u043c \u0447\u0438\u0441\u043b\u0435: <i>another pen, another cup</i>.<br>\n  <b>other</b> = \u0434\u0440\u0443\u0433\u0438\u0435 \u2192 \u043f\u0435\u0440\u0435\u0434 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u043c \u0432\u043e \u043c\u043d. \u0447.: <i>other people, other side</i>.<br>\n  <b>the other</b> = \u0432\u0442\u043e\u0440\u043e\u0439, \u0434\u0440\u0443\u0433\u043e\u0439 (\u0438\u0445 \u0432\u0441\u0435\u0433\u043e \u0434\u0432\u0430 / \u043a\u043e\u043d\u043a\u0440\u0435\u0442\u043d\u044b\u0439 \u0432\u0442\u043e\u0440\u043e\u0439): <i>the other hand, the other book</i>.<br>\n  <b>others</b> = \u0434\u0440\u0443\u0433\u0438\u0435 (\u0431\u0435\u0437 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0438\u0442\u0435\u043b\u044c\u043d\u043e\u0433\u043e): <i>Some like tea, others like coffee.</i><br>\n  <b>the others</b> = \u043e\u0441\u0442\u0430\u043b\u044c\u043d\u044b\u0435 (\u0438\u0437\u0432\u0435\u0441\u0442\u043d\u0430\u044f \u0433\u0440\u0443\u043f\u043f\u0430): <i>Two went home, the others stayed.</i><br>\n  <b>each other / one another</b> = \u0434\u0440\u0443\u0433 \u0434\u0440\u0443\u0433\u0430: <i>They help each other.</i>\n  <span class=\"tip\">\u0422\u0435\u0441\u0442: \u2460 \u0435\u0441\u0442\u044c <i>the</i> \u2192 \u00ab\u0432\u0442\u043e\u0440\u043e\u0439 / \u043e\u0441\u0442\u0430\u043b\u044c\u043d\u044b\u0435 \u0438\u0437 \u0438\u0437\u0432\u0435\u0441\u0442\u043d\u043e\u0439 \u0433\u0440\u0443\u043f\u043f\u044b\u00bb; \u2461 \u0435\u0441\u0442\u044c \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0438\u0442\u0435\u043b\u044c\u043d\u043e\u0435 \u043f\u043e\u0441\u043b\u0435 \u2192 <i>other / the other</i>; \u2462 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0438\u0442\u0435\u043b\u044c\u043d\u043e\u0433\u043e \u043d\u0435\u0442 \u2192 <i>others / the others / another (one)</i>.</span>\n</div>\n\n<h2 class=\"first\">Activity 1. \u041a\u0442\u043e \u0438\u0437 \u043d\u0438\u0445 \u043a\u0442\u043e? <span class=\"badge\">form</span></h2>\n<p class=\"lead\">\u0412\u043f\u0438\u0448\u0438 \u043d\u0443\u0436\u043d\u0443\u044e \u0444\u043e\u0440\u043c\u0443 \u00ab\u0434\u0440\u0443\u0433\u043e\u0439\u00bb \u2014 \u043f\u043e \u043e\u0434\u043d\u043e\u043c\u0443 \u0441\u043b\u043e\u0432\u0443 \u0432 \u043a\u0430\u0436\u0434\u044b\u0439 \u043f\u0440\u043e\u043f\u0443\u0441\u043a (\u0442\u0430\u043c, \u0433\u0434\u0435 \u043d\u0443\u0436\u043d\u043e \u00abthe other\u00bb, \u043f\u0438\u0448\u0438 \u0434\u0432\u0430 \u0441\u043b\u043e\u0432\u0430). <b>\u041f\u043e\u0434\u0441\u043a\u0430\u0437\u043e\u043a-\u043f\u0435\u0440\u0435\u0432\u043e\u0434\u043e\u0432 \u043d\u0435\u0442:</b> \u043d\u0443\u0436\u043d\u0443\u044e \u0444\u043e\u0440\u043c\u0443 \u043f\u043e\u0434\u0441\u043a\u0430\u0437\u044b\u0432\u0430\u0435\u0442 \u0441\u0430\u043c \u043a\u043e\u043d\u0442\u0435\u043a\u0441\u0442 \u2014 \u0441\u043a\u043e\u043b\u044c\u043a\u043e \u043f\u0440\u0435\u0434\u043c\u0435\u0442\u043e\u0432, \u043e\u0447\u0435\u0440\u0447\u0435\u043d \u043b\u0438 \u043a\u0440\u0443\u0433, \u0435\u0441\u0442\u044c \u043b\u0438 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0438\u0442\u0435\u043b\u044c\u043d\u043e\u0435 \u043f\u043e\u0441\u043b\u0435 \u043f\u0440\u043e\u043f\u0443\u0441\u043a\u0430.</p>\n\n<div class=\"wordbank\">another <span>\u00b7</span> other <span>\u00b7</span> the other <span>\u00b7</span> others <span>\u00b7</span> the others <span>\u00b7</span> each other</div>\n\n<p style=\"margin:0 0 1.6mm;font-size:7.9pt;color:#4a5364\"><b>others</b> \u2014 \u00ab\u043a\u0430\u043a\u0438\u0435-\u0442\u043e \u0434\u0440\u0443\u0433\u0438\u0435, \u0441\u043f\u0438\u0441\u043e\u043a \u043e\u0442\u043a\u0440\u044b\u0442\u00bb; <b>the others</b> \u2014 \u00ab\u0432\u0441\u0435 \u043e\u0441\u0442\u0430\u043b\u044c\u043d\u044b\u0435 \u0438\u0437 \u043e\u0447\u0435\u0440\u0447\u0435\u043d\u043d\u043e\u0433\u043e \u043a\u0440\u0443\u0433\u0430\u00bb (<i>some of my friends \u2192 the others</i>, <i>some people \u2192 others</i>).</p>\n\n<h3>Part A \u00b7 People and things</h3>\n<table>\n  <tr><th></th><th>Sentence</th></tr>\n  <tr><td class=\"num\">1</td><td>I don\u2019t like this coffee. Could I have <span class=\"gap\"></span> cup, please?</td></tr>\n  <tr><td class=\"num\">2</td><td>I have two sisters. One is a doctor, and <span class=\"gap\"></span> is a teacher.</td></tr>\n  <tr><td class=\"num\">3</td><td>Some people learn languages for work, and <span class=\"gap\"></span> learn them for pleasure.</td></tr>\n  <tr><td class=\"num\">4</td><td>Our house is on one side of the street \u2014 the sunny side \u2014 and the shop is on <span class=\"gap\"></span> side.</td></tr>\n  <tr><td class=\"num\">5</td><td>Five students in our group passed the test; <span class=\"gap\"></span> failed it.</td></tr>\n  <tr><td class=\"num\">6</td><td>This pen doesn\u2019t work. Give me <span class=\"gap\"></span> one.</td></tr>\n  <tr><td class=\"num\">7</td><td>Don\u2019t compare yourself with <span class=\"gap\"></span> people all the time \u2014 just be better than you were yesterday.</td></tr>\n  <tr><td class=\"num\">8</td><td>He\u2019s always ready to help <span class=\"gap\"></span> \u2014 even people he has never met.</td></tr>\n  <tr><td class=\"num\">9</td><td>My brother and I look very alike, but we are very different from <span class=\"gap\"></span>.</td></tr>\n  <tr><td class=\"num\">10</td><td>You\u2019ve already eaten three sandwiches. Do you really want <span class=\"gap\"></span>?</td></tr>\n</table>\n\n<h3>Part B \u00b7 Choose the correct option</h3>\n<ol class=\"opts\">\n  <li>These shoes are too small. Can I try <b>another / the others</b> size?</li>\n  <li>Where are <b>the others / others</b>? Did they all go home?</li>\n  <li>Kate and Ann are neighbours; they always borrow things from <b>another / each other</b>.</li>\n  <li>Some people like the city, but <b>other / others</b> prefer the countryside.</li>\n  <li>I\u2019ve read this book twice. Let\u2019s take <b>another / other</b> one from the library.</li>\n  <li>Two of the walls are grey and <b>the other / other</b> wall is white.</li>\n  <li>Ben isn\u2019t like his brother: he\u2019s much lazier than <b>the other / each other</b>.</li>\n  <li>We\u2019ve got no more ice cream. Would you like <b>other / another</b> dessert?</li>\n</ol>\n\n<div class=\"pagebreak\"></div>\n<h3 style=\"margin-top:0\">Part C \u00b7 Find the mistake, then correct it</h3>\n<p class=\"lead\" style=\"margin-top:0\">\u0412 \u043a\u0430\u0436\u0434\u043e\u043c \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u0438 \u043e\u0434\u043d\u043e \u043d\u0435\u0432\u0435\u0440\u043d\u043e\u0435 \u0441\u043b\u043e\u0432\u043e. \u0412\u044b\u043f\u0438\u0448\u0438 \u0435\u0433\u043e \u043d\u043e\u043c\u0435\u0440 \u0438 \u043d\u0430\u043f\u0438\u0448\u0438 \u043f\u0440\u0430\u0432\u0438\u043b\u044c\u043d\u0443\u044e \u0444\u043e\u0440\u043c\u0443.</p>\n<div class=\"sentence\" style=\"line-height:2.5\">\n  <ol class=\"opts\" start=\"19\">\n    <li>I have two pens: a blue one and a red one. The blue one is mine, and another is yours.</li>\n    <li>Some children are playing outside, and other are doing their homework.</li>\n    <li>She doesn\u2019t like this dress. She wants the other dress \u2014 any dress, just different.</li>\n    <li>Three tourists went to the museum and the other went to the park.</li>\n    <li>My cousins visit us every summer, and we always phone each another.</li>\n    <li>Don\u2019t worry about others people \u2014 think about yourself.</li>\n  </ol>\n</div>\n<p class=\"lead\" style=\"margin:3mm 0 0\">Corrections:</p>\n<table style=\"width:100%;border-collapse:collapse;margin-top:1mm\">\n  <tr>\n    <td style=\"border:none;padding:0 2mm 0 0;width:16.6%\">19 <span class=\"gap\" style=\"min-width:20mm\"></span></td>\n    <td style=\"border:none;padding:0 2mm 0 0;width:16.6%\">20 <span class=\"gap\" style=\"min-width:20mm\"></span></td>\n    <td style=\"border:none;padding:0 2mm 0 0;width:16.6%\">21 <span class=\"gap\" style=\"min-width:20mm\"></span></td>\n    <td style=\"border:none;padding:0 2mm 0 0;width:16.6%\">22 <span class=\"gap\" style=\"min-width:20mm\"></span></td>\n    <td style=\"border:none;padding:0 2mm 0 0;width:16.6%\">23 <span class=\"gap\" style=\"min-width:20mm\"></span></td>\n    <td style=\"border:none;padding:0;width:16.6%\">24 <span class=\"gap\" style=\"min-width:20mm\"></span></td>\n  </tr>\n</table>\n\n<h3>Part D \u00b7 About you</h3>\n<p class=\"lead\" style=\"margin-top:0\">Complete the sentences so they are true for you. Use a different form each time.</p>\n<ol class=\"opts\" style=\"line-height:2.3\">\n  <li>I have two favourite films. One is <span class=\"gap\" style=\"min-width:30mm\"></span> and <span class=\"gap\" style=\"min-width:30mm\"></span> is <span class=\"gap\" style=\"min-width:30mm\"></span> .</li>\n  <li>I have five close friends. Two of them are good at sport, and <span class=\"gap\" style=\"min-width:26mm\"></span> <span class=\"gap\" style=\"min-width:44mm\"></span> . <span class=\"lead\" style=\"font-size:7.6pt;color:#8b93a5\">(\u0432\u0441\u0435 \u043f\u044f\u0442\u0435\u0440\u043e \u0443\u0447\u0442\u0435\u043d\u044b)</span></li>\n  <li>When I want <span class=\"gap\" style=\"min-width:24mm\"></span> cup of tea, I usually <span class=\"gap\" style=\"min-width:52mm\"></span> .</li>\n  <li>I often talk to my family about <span class=\"gap\" style=\"min-width:28mm\"></span> <span class=\"gap\" style=\"min-width:48mm\"></span> .</li>\n  <li>Some of my classmates want to go to university, and <span class=\"gap\" style=\"min-width:26mm\"></span> <span class=\"gap\" style=\"min-width:44mm\"></span> .</li>\n  <li>My best friend and I always help <span class=\"gap\" style=\"min-width:24mm\"></span> with English.</li>\n</ol>\n\n<div class=\"lines\" style=\"margin-top:3mm\">\n  <div></div><div></div><div></div><div></div>\n</div>\n\n<p class=\"footnote\" style=\"margin-top:5mm\"><b>Watch out:</b> \u2717 another people \u2192 \u2713 other people &nbsp;\u00b7&nbsp; \u2717 others people \u2192 \u2713 other people &nbsp;\u00b7&nbsp; \u2717 an other \u2192 \u2713 another &nbsp;\u00b7&nbsp; \u2717 each another \u2192 \u2713 each other / one another &nbsp;\u00b7&nbsp; \u00abthe other\u00bb \u2014 \u0442\u043e\u043b\u044c\u043a\u043e \u043a\u043e\u0433\u0434\u0430 \u043f\u0440\u0435\u0434\u043c\u0435\u0442\u043e\u0432 \u0434\u0432\u0430.</p>\n\n<!-- =============== PAGE 3: WORKSHEET, ACTIVITY 2 =============== -->\n<div class=\"pagebreak\"></div>\n\n<h2 class=\"first\">Activity 2. \u0421\u043a\u043e\u043b\u044c\u043a\u043e \u00ab\u0434\u0440\u0443\u0433\u0438\u0445\u00bb \u0432\u043e\u043a\u0440\u0443\u0433? <span class=\"badge\">meaning</span></h2>\n<p class=\"lead\">\u0417\u0430\u043f\u043e\u043b\u043d\u0438 \u043f\u0440\u043e\u043f\u0443\u0441\u043a\u0438 \u0432 \u0434\u0432\u0443\u0445 \u0438\u0441\u0442\u043e\u0440\u0438\u044f\u0445 \u2014 \u043f\u0440\u0438\u043c\u0435\u0440\u043e\u0432 \u043d\u0435 \u0434\u0430\u043d\u043e, \u0432\u0441\u0435 \u043f\u0440\u043e\u043f\u0443\u0441\u043a\u0438 \u043f\u0443\u0441\u0442\u044b\u0435. \u0417\u0430\u0442\u0435\u043c \u0432\u044b\u043f\u043e\u043b\u043d\u0438 Step 4.</p>\n\n<div class=\"wordbank\">another <span>\u00b7</span> other <span>\u00b7</span> the other <span>\u00b7</span> others <span>\u00b7</span> the others <span>\u00b7</span> each other <span>\u00b7</span> one another</div>\n\n<h3>Story A \u00b7 The twin sisters</h3>\n<div class=\"story\">\n  Lena and Sveta are twins, but they are not like <span class=\"gap\"></span><sup>(1)</sup> at all. Lena is tall and short-haired,\n  and <span class=\"gap\"></span><sup>(2)</sup> sister has long curly hair. Lena loves maths and can solve problems for hours, while Sveta has read\n  more than fifty books this year and always wants <span class=\"gap\"></span><sup>(3)</sup> one. Some of their classmates think twins are\n  boring because they are so alike, and <span class=\"gap\"></span><sup>(4)</sup> say twins are lucky. Their house has two sides \u2014 a\n  sunny side and a quiet side \u2014 and the twins share one room on <span class=\"gap\"></span><sup>(5)</sup> side, the quiet one. In the evening, when the homework is done, one of the twins\n  washes the dishes and <span class=\"gap\"></span><sup>(6)</sup> cleans the room. At school the girls hardly see\n  <span class=\"gap\"></span><sup>(7)</sup>: Lena studies in a maths club, Sveta in a drama studio. Their parents often say that\n  <span class=\"gap\"></span><sup>(8)</sup> families with twins have an easier life. Lena wants a kitten for her birthday; Sveta wants a\n  violin \u2014 that\u2019s quite <span class=\"gap\"></span><sup>(9)</sup> thing. Last Saturday five girls from their class came to visit; two left\n  early and <span class=\"gap\"></span><sup>(10)</sup> stayed until nine. And at the end of the day the twins always tell\n  <span class=\"gap\"></span><sup>(11)</sup> everything.\n</div>\n\n<h3>Story B \u00b7 Moving to a new house</h3>\n<div class=\"story\">\n  Last June my family moved to <span class=\"gap\"></span><sup>(12)</sup> flat in a quiet area. Our flat is on the second floor of a small\n  white building; two families live on our floor \u2014 one is a young couple, and <span class=\"gap\"></span><sup>(13)</sup> is an old lady who\n  keeps a broom by the door. Some of the neighbours are very friendly, and <span class=\"gap\"></span><sup>(14)</sup> hardly say a word \u2014 nobody is in between.\n  There are two big trees under my window: one is a birch, and <span class=\"gap\"></span><sup>(15)</sup> is an oak. On sunny days I do my\n  homework under the birch; on <span class=\"gap\"></span><sup>(16)</sup> days \u2014 and there are many of them in our climate \u2014 I stay inside. My parents want to buy\n  <span class=\"gap\"></span><sup>(17)</sup> sofa for the living room because the old one is too small for all four of us. Our new flat is\n  small: it has only two rooms, so my sister and I share one and our parents have the rest of the space. My sister and I\n  decorated our room ourselves: we chose every poster together and never argued with <span class=\"gap\"></span><sup>(18)</sup>. Five of our\n  friends helped us carry the boxes; <span class=\"gap\"></span><sup>(19)</sup> came in the evening and brought us pizza. At the end of the\n  day I was so tired that I could hardly walk from one room to <span class=\"gap\"></span><sup>(20)</sup>. And now, a year later, my sister\n  and I still do our homework together and help <span class=\"gap\"></span><sup>(21)</sup> every evening.\n</div>\n\n<div class=\"avoid\">\n<h3>Step 4 \u00b7 \u0422\u044b \u2014 \u0440\u0430\u0441\u0441\u043a\u0430\u0437\u0447\u0438\u043a</h3>\n<p class=\"lead\" style=\"margin-top:0\">\u0420\u0430\u0441\u0441\u043a\u0430\u0436\u0438 \u0441\u0432\u043e\u044e \u0438\u0441\u0442\u043e\u0440\u0438\u044e (6\u20138 \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u0439). \u0418\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0439 \u043c\u0438\u043d\u0438\u043c\u0443\u043c <b>\u043f\u044f\u0442\u044c</b> \u0440\u0430\u0437\u043d\u044b\u0445 \u0444\u043e\u0440\u043c \u0438\u0437 \u0431\u0430\u043d\u043a\u0430 \u0441\u043b\u043e\u0432, \u0438 \u0445\u043e\u0442\u044f \u0431\u044b \u043e\u0434\u043d\u0443 \u00ab\u0434\u0440\u0443\u0433 \u0434\u0440\u0443\u0433\u0430\u00bb.</p>\n<div class=\"lines\">\n  <div></div><div></div><div></div><div></div><div></div><div></div>\n</div>\n\n</div>\n\n<!-- =============== PAGE 4: TEACHER'S KEY =============== -->\n<div class=\"pagebreak\"></div>\n\n<h2 class=\"first\">Answer key \u00b7 Activity 1</h2>\n<div class=\"keys\">\n  <p><b>Part A</b></p>\n  <table class=\"keytable\">\n    <tr><td class=\"n\">1</td><td class=\"ans\">another</td><td class=\"n\">2</td><td class=\"ans\">the other</td><td class=\"n\">3</td><td class=\"ans\">others</td><td class=\"n\">4</td><td class=\"ans\">the other</td><td class=\"n\">5</td><td class=\"ans\">the others</td></tr>\n    <tr><td class=\"n\">6</td><td class=\"ans\">another</td><td class=\"n\">7</td><td class=\"ans\">other</td><td class=\"n\">8</td><td class=\"ans\">others</td><td class=\"n\">9</td><td class=\"ans\">each other</td><td class=\"n\">10</td><td class=\"ans\">another</td></tr>\n  </table>\n  <p><b>Part B</b> &nbsp;11 <b>another</b> \u00b7 12 <b>the others</b> \u00b7 13 <b>each other</b> \u00b7 14 <b>others</b> \u00b7 15 <b>another</b> \u00b7 16 <b>the other</b> \u00b7 17 <b>the other</b> \u00b7 18 <b>another</b></p>\n  <p><b>Part C</b></p>\n  <table class=\"keytable\">\n    <tr><td class=\"n\">19</td><td>another \u2192 <b>the other</b></td><td class=\"n\">20</td><td>other \u2192 <b>others</b> (other children)</td><td class=\"n\">21</td><td>the other \u2192 <b>another</b></td></tr>\n    <tr><td class=\"n\">22</td><td>the other \u2192 <b>the others</b></td><td class=\"n\">23</td><td>each another \u2192 <b>each other</b></td><td class=\"n\">24</td><td>others people \u2192 <b>other</b> people</td></tr>\n  </table>\n  <p><b>Part D</b> \u2014 \u0441\u0432\u043e\u0431\u043e\u0434\u043d\u044b\u0435 \u043e\u0442\u0432\u0435\u0442\u044b; \u0437\u0430\u0441\u0447\u0438\u0442\u044b\u0432\u0430\u0442\u044c \u043d\u0443\u0436\u043d\u043e <i>\u0444\u043e\u0440\u043c\u0443</i>, \u0430 \u043d\u0435 \u0441\u043e\u0434\u0435\u0440\u0436\u0430\u043d\u0438\u0435. \u041e\u0431\u0435 \u043c\u043e\u0434\u0435\u043b\u0438 (\u0432\u0441\u0435 \u0448\u0435\u0441\u0442\u044c \u0444\u043e\u0440\u043c \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u044b \u043f\u043e \u043e\u0434\u043d\u043e\u043c\u0443 \u0440\u0430\u0437\u0443):</p>\n  <p style=\"margin-left:4mm;font-size:7.8pt;line-height:1.4\"><b>Model 1 (\u043f\u0440\u043e\u0449\u0435):</b> 1 \u2026and <b>the other</b> is \u00abInterstellar\u00bb \u00b7 2 \u2026and <b>the others</b> play music \u00b7 3 When I want <b>another</b> cup of tea, I usually make it myself \u00b7 4 \u2026about <b>other</b> things \u2014 school and films \u00b7 5 \u2026and <b>the others</b> want to start working \u00b7 6 \u2026help <b>each other</b> with English.</p>\n  <p style=\"margin-left:4mm;font-size:7.8pt;line-height:1.4\"><b>Model 2 (\u0431\u043e\u0433\u0430\u0447\u0435):</b> 1 \u2026and <b>the other</b> is a documentary about the ocean \u00b7 2 \u2026and <b>the others</b> prefer music \u00b7 3 When I want <b>another</b> cup of tea, I usually take the big mug and go back to my homework \u00b7 4 \u2026about <b>other</b> people\u2019s news \u2014 who moved, who got married \u00b7 5 \u2026and <b>the others</b> are still choosing \u00b7 6 \u2026help <b>each other</b> with English: I explain grammar and she checks my pronunciation.</p>\n  <p><b>\u0412\u0430\u0436\u043d\u043e \u043f\u0440\u0438 \u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0435:</b> \u0432 \u043f. 4 \u043f\u0440\u0438\u043d\u0438\u043c\u0430\u0435\u0442\u0441\u044f \u0438 <b>others</b>, \u0435\u0441\u043b\u0438 \u0443\u0447\u0435\u043d\u0438\u043a \u0438\u043c\u0435\u043b \u0432 \u0432\u0438\u0434\u0443 \u00ab\u043f\u0440\u043e \u0434\u0440\u0443\u0433\u0438\u0445 \u043b\u044e\u0434\u0435\u0439\u00bb: <i>I often talk to my family about <b>others</b></i> (\u0440\u0435\u0436\u0435, \u043d\u043e \u0433\u0440\u0430\u043c\u043c\u0430\u0442\u0438\u0447\u043d\u043e). \u0422\u043e\u0433\u0434\u0430 \u0432 \u043f. 4 \u0443 \u043d\u0435\u0433\u043e <i>others</i>, \u0438 \u043d\u0430\u0431\u043e\u0440 \u0444\u043e\u0440\u043c \u0432\u0441\u0451 \u0440\u0430\u0432\u043d\u043e \u043f\u043e\u043b\u043d\u044b\u0439.</p>\n</div>\n\n<h2>Answer key \u00b7 Activity 2</h2>\n<div class=\"keys\">\n  <p><b>Story A</b> \u00b7 (1) each other / one another \u00b7 (2) the other \u00b7 (3) another \u00b7 (4) the others <i>(some of their classmates \u2192 \u0437\u0430\u043a\u0440\u044b\u0442\u044b\u0439 \u043e\u0441\u0442\u0430\u0442\u043e\u043a)</i> \u00b7 (5) the other <i>(\u0434\u0432\u0435 \u0441\u0442\u043e\u0440\u043e\u043d\u044b \u0434\u043e\u043c\u0430 \u0437\u0430\u0434\u0430\u043d\u044b \u0432 \u0442\u0435\u043a\u0441\u0442\u0435)</i> \u00b7 (6) the other \u00b7 (7) each other / one another \u00b7 (8) other \u00b7 (9) another \u00b7 (10) the others \u00b7 (11) each other / one another</p>\n  <p><b>Story B</b> \u00b7 (12) another \u00b7 (13) the other \u00b7 (14) the others <i>(some of the neighbours)</i> \u00b7 (15) the other \u00b7 (16) other \u00b7 (17) another \u00b7 (18) each other / one another \u00b7 (19) the others \u00b7 (20) the other <i>(\u0432 \u043a\u0432\u0430\u0440\u0442\u0438\u0440\u0435 \u0434\u0432\u0435 \u043a\u043e\u043c\u043d\u0430\u0442\u044b \u2014 \u0441\u043a\u0430\u0437\u0430\u043d\u043e \u0432 \u0442\u0435\u043a\u0441\u0442\u0435)</i> \u00b7 (21) one another / each other</p>\n  <p><b>Step 4</b> \u2014 \u043e\u0446\u0435\u043d\u0438\u0432\u0430\u044e\u0442\u0441\u044f \u0442\u043e\u043b\u044c\u043a\u043e \u0444\u043e\u0440\u043c\u044b: \u043c\u0438\u043d\u0438\u043c\u0443\u043c \u043f\u044f\u0442\u044c \u0440\u0430\u0437\u043d\u044b\u0445 \u0438 \u043e\u0434\u043d\u0430 \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u043d\u0430\u044f \u0432\u043e\u0437\u0432\u0440\u0430\u0442\u043d\u0430\u044f \u0444\u043e\u0440\u043c\u0430.</p>\n  <p><b>Model answer for Step 4</b> <i>(six forms: another \u00b7 the other \u00b7 the others \u00b7 each other \u00b7 other \u00b7 others)</i>:</p>\n  <p style=\"margin-left:4mm;font-style:italic;color:#2c3548;font-size:7.8pt;line-height:1.45\">Last autumn my family and I moved to <b>another</b> flat in a quieter area. Our new flat has only two rooms, so my brother and I share one and our parents have <b>the other</b>. At first I didn\u2019t like the place: some of the neighbours were very friendly, and <b>the others</b> hardly said hello. Now I know them all. My brother and I decorated our room ourselves and never argued with <b>each other</b>. On sunny days we play football outside; on <b>other</b> days we stay at home and watch films. My mother wants to buy <b>another</b> sofa for the living room, because the old one is too small for all four of us. Some of my classmates still live near our old flat, and <b>others</b> have moved away, so I don\u2019t see them very often. But my brother and I always do our homework together and help <b>each other</b>, and that makes any new place feel like home.</p>\n</div>\n\n<h2>Teaching notes</h2>\n<div class=\"rulecard\" style=\"border-left-color:#2c3548; background:#f7f8fa\">\n  <p style=\"margin-top:0\"><b>\u0422\u0438\u043f\u0438\u0447\u043d\u044b\u0435 \u043e\u0448\u0438\u0431\u043a\u0438:</b> <i>*another people</i> (\u2192 other people), <i>*others people</i> (\u2192 other people), <i>*an other</i> (\u2192 another), <i>the other</i> \u043f\u0440\u0438 \u0442\u0440\u0451\u0445 \u0438 \u0431\u043e\u043b\u0435\u0435 \u043f\u0440\u0435\u0434\u043c\u0435\u0442\u0430\u0445 (\u2192 the others / another), <i>*each another</i> (\u2192 each other).</p>\n  <p><b>\u0414\u0432\u0430 \u043f\u0440\u0430\u0432\u0438\u043b\u0430-\u043d\u0430\u043f\u043e\u043c\u0438\u043d\u0430\u043d\u0438\u044f:</b> <i>another</i> + \u0442\u043e\u043b\u044c\u043a\u043e \u0435\u0434\u0438\u043d\u0441\u0442\u0432\u0435\u043d\u043d\u043e\u0435 \u0447\u0438\u0441\u043b\u043e (another book \u2713, *another books \u2717); <i>the other</i> + \u0435\u0434. \u0438\u043b\u0438 \u043c\u043d. \u0447\u0438\u0441\u043b\u043e (the other book / the other walls \u2713), \u043d\u043e \u043b\u0438\u0448\u044c \u043a\u043e\u0433\u0434\u0430 \u043e\u0441\u0442\u0430\u0442\u043e\u043a \u0433\u0440\u0443\u043f\u043f\u044b \u044f\u0441\u0435\u043d \u0438\u0437 \u043a\u043e\u043d\u0442\u0435\u043a\u0441\u0442\u0430.</p>\n  <p><b>\u041a\u0430\u043a \u0440\u0430\u0431\u043e\u0442\u0430\u0442\u044c:</b> Activity 1 (10\u201312 \u043c\u0438\u043d) \u2014 \u0444\u043e\u0440\u043c\u0430: Part A \u0438 B \u043f\u0438\u0441\u044c\u043c\u0435\u043d\u043d\u043e, Part C \u0432 \u043f\u0430\u0440\u0430\u0445 \u00ab\u043a\u0442\u043e \u0431\u044b\u0441\u0442\u0440\u0435\u0435 \u043d\u0430\u0439\u0434\u0451\u0442\u00bb, Part D \u2014 \u0434\u043e\u043c\u0430. Activity 2 (15\u201318 \u043c\u0438\u043d) \u2014 \u0441\u043c\u044b\u0441\u043b: \u0438\u0441\u0442\u043e\u0440\u0438\u0438 \u0437\u0430\u043f\u043e\u043b\u043d\u044f\u044e\u0442\u0441\u044f \u0438\u043d\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043b\u044c\u043d\u043e, \u0447\u0438\u0442\u0430\u044e\u0442\u0441\u044f \u0432\u0441\u043b\u0443\u0445 \u0432 \u043f\u0430\u0440\u0430\u0445, Step 4 \u2014 \u0443\u0441\u0442\u043d\u044b\u0439 \u0440\u0430\u0441\u0441\u043a\u0430\u0437.</p>\n  <p><b>\u0412\u0430\u0436\u043d\u043e \u0434\u043b\u044f \u0430\u0432\u0442\u043e\u0440\u0430 \u0437\u0430\u0434\u0430\u043d\u0438\u044f:</b> <i>the other</i> \u0432\u043e\u0437\u043c\u043e\u0436\u043d\u043e \u0442\u043e\u043b\u044c\u043a\u043e \u0442\u0430\u043c, \u0433\u0434\u0435 \u0432 \u0442\u0435\u043a\u0441\u0442\u0435 \u0443\u0436\u0435 \u0437\u0430\u0434\u0430\u043d\u043e \u00ab\u0438\u0445 \u0434\u0432\u0430\u00bb (\u0434\u0432\u0435 \u0441\u0435\u0441\u0442\u0440\u044b, \u0434\u0432\u0435 \u0441\u0442\u043e\u0440\u043e\u043d\u044b \u0434\u043e\u043c\u0430, \u0434\u0432\u0435 \u043a\u043e\u043c\u043d\u0430\u0442\u044b, \u0434\u0432\u0430 \u0434\u0435\u0440\u0435\u0432\u0430, \u0434\u0432\u0435 \u0441\u0435\u043c\u044c\u0438 \u043d\u0430 \u044d\u0442\u0430\u0436\u0435); <i>the others</i> \u2014 \u0433\u0434\u0435 \u0437\u0430\u0434\u0430\u043d \u0437\u0430\u043a\u0440\u044b\u0442\u044b\u0439 \u043a\u0440\u0443\u0433 (<i>some of their classmates, five of our friends</i>). \u0415\u0441\u043b\u0438 \u043a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u043d\u0435 \u043d\u0430\u0437\u0432\u0430\u043d\u043e, \u043f\u0440\u0430\u0432\u0438\u043b\u044c\u043d\u0435\u0435 <i>another</i>.</p>\n  <p><b>others vs the others \u2014 \u0442\u0435\u0441\u0442 \u043d\u0430 \u043e\u0441\u0442\u0430\u0442\u043e\u043a:</b> \u0435\u0441\u043b\u0438 \u043c\u043d\u043e\u0436\u0435\u0441\u0442\u0432\u043e \u0437\u0430\u0434\u0430\u043d\u043e \u043a\u0430\u043a \u0447\u0430\u0441\u0442\u044c \u0446\u0435\u043b\u043e\u0433\u043e (<i>some of my friends / classmates / neighbours</i>, <i>five students in our group</i>), \u043e\u0441\u0442\u0430\u0442\u043e\u043a \u0437\u0430\u043a\u0440\u044b\u0442 \u2192 <b>the others</b>. \u0415\u0441\u043b\u0438 \u043c\u043d\u043e\u0436\u0435\u0441\u0442\u0432\u043e \u043e\u0442\u043a\u0440\u044b\u0442\u043e\u0435, \u00ab\u043b\u044e\u0434\u0438/\u0432\u0435\u0449\u0438 \u0432\u043e\u043e\u0431\u0449\u0435\u00bb (<i>some people</i>, <i>some books</i>) \u2192 <b>others</b>. \u041f\u0440\u043e\u0432\u0435\u0440\u043a\u0430 \u043f\u043e\u0434\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u043e\u0439: <i>the rest</i> \u0437\u0432\u0443\u0447\u0438\u0442 \u043a\u0430\u043a \u043f\u0440\u0430\u0432\u0434\u0430 \u2192 <b>the others</b>; \u00ab\u043a\u0430\u043a\u0438\u0435-\u0442\u043e \u0435\u0449\u0451\u00bb \u2192 <b>others</b>.</p>\n  <p style=\"margin-bottom:0\"><b>\u041a\u0440\u0438\u0442\u0435\u0440\u0438\u0438 \u043e\u0446\u0435\u043d\u0438\u0432\u0430\u043d\u0438\u044f:</b> 34 \u0432\u0435\u0440\u043d\u044b\u0445 \u043f\u0443\u043d\u043a\u0442\u0430 \u0438\u0437 45 (75 %) \u2014 \u00ab\u0437\u0430\u0447\u0451\u0442\u00bb; Part D \u0438 Step 4 \u2014 \u0442\u043e\u043b\u044c\u043a\u043e \u0441\u043e\u0434\u0435\u0440\u0436\u0430\u0442\u0435\u043b\u044c\u043d\u043e, \u0431\u0435\u0437 \u0432\u044b\u0441\u0442\u0430\u0432\u043b\u0435\u043d\u0438\u044f \u0431\u0430\u043b\u043b\u043e\u0432.</p>\n</div>\n\n"};
+
+  function buildPrintHtml(){
+    return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">' +
+      '<title>«Другой» in English — worksheets (print version)</title>' +
+      '<style>@page{size:A4;margin:15mm 16mm}body{margin:0}' + PRINT_DOC.style + '</style>' +
+      '</head><body>' + PRINT_DOC.body + '</body></html>';
+  }
+
+  function openPrintVersion(){
+    const html = buildPrintHtml();
+    const blob = new Blob([html], {type: "text/html;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    let w = null;
+    try { w = window.open(url, "_blank"); } catch(e){ w = null; }
+    if (w){
+      setTimeout(() => { try { w.focus(); w.print(); } catch(e){} }, 700);
+      return;
+    }
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Drugoy_worksheets_print.html";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    alert("Файл для печати скачан. Открой его в браузере и нажми Ctrl+P (⌘+P) → «Сохранить как PDF». А4, 4 страницы: задания 1–2 + ключи.");
+  }
+
+  const pb = document.getElementById("printBtn");
+  if (pb) pb.addEventListener("click", openPrintVersion);
+
+  refreshProgress();
+})();
+</script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a51c3aba194bfaac',t:'MTc5MzIxNDUwOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
